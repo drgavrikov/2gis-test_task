@@ -1,37 +1,33 @@
+#include "word_counter.hpp"
+#include <cctype>
 #include <fstream>
 #include <string>
 
-int countWord(const std::string &filepath, std::string word) {
-    std::ifstream file(filepath);
-    if (!file) {
-        throw std::runtime_error("Cannot open file");
-    }
 
-    int count = 0;
+size_t count_word(std::istream &input, const std::string &word) {
+    size_t count = 0;
+    bool equal = true;
+    size_t index = 0;
 
-    char c;
-    bool isEqual = true;
-    int index = 0;
-    while (file.get(c)) {
-        if (ispunct(c) || isspace(c)) {
-            if (isEqual && index == word.length()) {
+    char ch;
+    while (input.get(ch))
+        if (std::isspace(static_cast<unsigned char>(ch))) {
+            if (equal && index == word.length()) {
                 count++;
             }
-            isEqual = true;
+            equal = true;
             index = 0;
         } else {
-            if (index < word.length() && word[index] == c) {
+            if (index < word.length() && word[index] == ch) {
                 index++;
             } else {
-                isEqual = false;
+                equal = false;
             }
         }
-    }
 
-    if (isEqual && index == word.length()) {
+
+    if (equal && index == word.length()) {
         count++;
     }
-
-    file.close();
     return count;
 }

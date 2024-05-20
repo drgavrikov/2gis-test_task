@@ -1,28 +1,21 @@
-#include <fstream>
-#include <stdexcept>
+#include "checksum.hpp"
 #include <cstdint>
+#include <fstream>
 
 
-uint32_t calculateChecksum(const std::string &filename) {
-    std::ifstream file(filename, std::ios::binary);
-    if (!file) {
-        throw std::runtime_error("Cannot open file");
-    }
+std::uint32_t checksum(std::istream& input) {
+    std::uint32_t checksum = 0;
+    std::uint32_t shift = 0;
 
-    uint32_t checksum = 0;
-    uint32_t word;
+    auto process_char = [&checksum, &shift](unsigned char value) {
+        auto word = static_cast<std::uint32_t>(value);
+        checksum += (word << shift);
+        shift += 8;
+        if (shift == 32) {
+            shift = 0;
+        }
+    };
+    std::for_each(std::istreambuf_iterator<char>(input), std::istreambuf_iterator<char>(), process_char);
 
-    while (file.read(reinterpret_cast<char *>(&word), sizeof(word))) {
-        checksum += word;
-    }
-
-    char remainingBytes[4] = {0};
-    file.read(remainingBytes, 4);
-    if (file.gcount() > 0) {
-        word = *reinterpret_cast<uint32_t *>(remainingBytes);
-        checksum += word;
-    }
-
-    file.close();
     return checksum;
 }

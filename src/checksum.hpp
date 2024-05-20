@@ -1,9 +1,9 @@
 #ifndef CHECKSUM_HPP
 #define CHECKSUM_HPP
 
-#include <string>
 #include <cstdint>
+#include <fstream>
 
-uint32_t calculateChecksum(const std::string &filename);
+std::uint32_t checksum(std::istream& input);
 
 #endif

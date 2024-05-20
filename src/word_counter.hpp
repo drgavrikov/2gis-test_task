@@ -1,8 +1,6 @@
-#ifndef COUNT_WORD_H
-#define COUNT_WORD_H
-
+#include <cctype>
+#include <fstream>
 #include <string>
 
-int countWord(const std::string &filepath, std::string word);
 
-#endif
+size_t count_word(std::istream &input, const std::string &word);
